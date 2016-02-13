@@ -1,8 +1,11 @@
-# Basic Project
+# Basic Automation Project
 
- Basic Java Maven Project Structure
+ Basic Java Selenium Automation Project
  * QA
  * Java
  * Maven
+  
+ 
+
  
  [Jean-francois Nepton](http://sqasolution.com)
