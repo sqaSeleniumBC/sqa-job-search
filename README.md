@@ -1,11 +1,21 @@
-# Basic Automation Project
+# Advanced Automation Project
 
- Basic Java Selenium Automation Project
- * QA
- * Java
- * Maven
+Advanced Automation Framework for Java Selenium WebDriver Automation Tests
+
+* Java
+* Selenium WebDriver
+* Maven
+* Ant
+* mySQL
+* Apache POI
+* HTML
+* CSS
+* MapUI Properties
+* Log4j
+* Eclipse
+* IntelliJ
+* JUnit
+* TestNG
+* Jenkins
   
- 
-
- 
- [Jean-francois Nepton](http://sqasolution.com)
+[Jean-francois Nepton](http://jfbuilds.com)
