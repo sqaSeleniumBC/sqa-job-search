@@ -29,6 +29,7 @@ local.properties
 .settings/
 .loadpath
 target
+test-output/
 
 # Eclipse Core
 .project
