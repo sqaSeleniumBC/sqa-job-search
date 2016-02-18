@@ -7,6 +7,8 @@
  */
 package com.sqa.jf.auto.config;
 
+import java.util.*;
+
 import org.openqa.selenium.*;
 import org.testng.annotations.*;
 
@@ -23,7 +25,22 @@ import org.testng.annotations.*;
  */
 public class DriverFactory {
 
+	private static List<WebDriverThread> webDriverThreadPool =
+			Collections.synchronizedList(new ArrayList<WebDriverThread>());
+
 	private static ThreadLocal<WebDriverThread> driverThread;
+
+	@AfterMethod
+	public static void clearCookies() throws Exception {
+		getDriver().manage().deleteAllCookies();
+	}
+
+	@AfterSuite
+	public static void closeDriverObjects() {
+		for (WebDriverThread webDriverThread : webDriverThreadPool) {
+			webDriverThread.quitDriver();
+		}
+	}
 
 	public static WebDriver getDriver() throws Exception {
 		return driverThread.get().getDriver();
@@ -36,13 +53,9 @@ public class DriverFactory {
 			@Override
 			protected WebDriverThread initialValue() {
 				WebDriverThread webDriverThread = new WebDriverThread();
+				webDriverThreadPool.add(webDriverThread);
 				return webDriverThread;
 			}
 		};
-	}
-
-	@AfterMethod
-	public static void quitDriver() throws Exception {
-		driverThread.get().quitDriver();
 	}
 }
