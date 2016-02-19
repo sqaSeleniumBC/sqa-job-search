@@ -3,6 +3,7 @@ package com.sqa.jf.auto.demo;
 import org.openqa.selenium.*;
 import org.testng.annotations.*;
 
+import com.sqa.jf.auto.*;
 import com.sqa.jf.auto.config.*;
 
 public class BasicTestWD extends DriverFactory {
