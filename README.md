@@ -17,5 +17,9 @@ Advanced Automation Framework for Java Selenium WebDriver Automation Tests
 * JUnit
 * TestNG
 * Jenkins
+
+### Changes Log
+* Support for Multi-Threads
+* Support for Multi-Browsers Runs
   
 [Jean-francois Nepton](http://jfbuilds.com)
