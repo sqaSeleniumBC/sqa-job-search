@@ -19,6 +19,7 @@
 		<jdk.version>1.7</jdk.version>
 		<!-- Configurable variables -->
 		<threads>1</threads>
+		<browser>firefox</browser>
 	</properties>
 
 	<dependencies>
@@ -51,6 +52,9 @@
 				<configuration>
 					<parallel>methods</parallel>
 					<threadCount>${threads}</threadCount>
+					<systemProperties>
+						<browser>${broswer}</browser>
+					</systemProperties>
 					<includes>
 						<include>**/*WD.java</include>
 					</includes>
