@@ -28,7 +28,7 @@ tmp/
 local.properties
 .settings/
 .loadpath
-target
+target/
 test-output/
 
 # Eclipse Core
