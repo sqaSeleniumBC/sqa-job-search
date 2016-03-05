@@ -1,6 +1,6 @@
-# Advanced Automation Project
+# Rent Testers Search Engine Automation Tests
 
-Advanced Automation Framework for Java Selenium WebDriver Automation Tests
+Advanced Automation Framework for Java Selenium WebDriver Automation Tests Using TestNG
 
 * Java
 * Selenium WebDriver
@@ -22,4 +22,4 @@ Advanced Automation Framework for Java Selenium WebDriver Automation Tests
 * Support for Multi-Threads
 * Support for Multi-Browsers Runs
   
-[Jean-francois Nepton](http://jfbuilds.com)
+[SQA Tean March 2016](http://renttesters.com)
