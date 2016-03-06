@@ -9,7 +9,7 @@ import org.testng.annotations.Test;
 
 public class JobSearchTest {
 
-	public String BASE_URL = "https://www.amazon.com";
+	public String BASE_URL = "http://careers.renttesters.com/advancedSearch";
 
 	private WebDriver driver;
 
@@ -25,9 +25,11 @@ public class JobSearchTest {
 	@BeforeClass
 	public void beforeClass() {
 		this.driver = new FirefoxDriver();
+		this.driver.get(this.BASE_URL + "/");
 	}
 
 	@AfterClass
 	public void afterClass() {
+		this.driver.quit();
 	}
 }
