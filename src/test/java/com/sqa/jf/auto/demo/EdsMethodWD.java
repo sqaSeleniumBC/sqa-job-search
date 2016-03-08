@@ -34,7 +34,7 @@ import org.testng.annotations.Test;
  * @version 1.0.0
  * @since 1.0
  */
-public class edsMethodWD {
+public class EdsMethodWD {
 
 	public String BASE_URL = "http://careers.renttesters.com/advancedSearch";
 
