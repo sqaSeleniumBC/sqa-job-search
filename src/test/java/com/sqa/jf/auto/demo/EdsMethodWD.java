@@ -70,7 +70,11 @@ public class EdsMethodWD {
 							.isDisplayed()) {
 				Select select =
 						new Select(this.driver.findElement(By.xpath(".//*[@id='items_per_page']")));
-				select.selectByValue("50");
+				// TODO: Need to use next page... or verify that DDL has already
+				// been selected.
+				if (!this.driver.findElement(By.xpath("")).isSelected()) {
+					select.selectByValue("50");
+				}
 				List<WebElement> elements =
 						this.driver.findElements(By.cssSelector("a[href^='/view/position']"));
 				actualFound += elements.size();
