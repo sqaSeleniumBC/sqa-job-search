@@ -12,19 +12,40 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import junit.framework.Assert;
+import junit.framework.ComparisonFailure;
 
 public class DanTest {
 	// Declaring variables
 	public static String baseURL = "http://careers.renttesters.com/";
-	public static int verifyPagesNumInt;
-	public static String verifyPagesNumString;
-	private WebDriver driver;
+	public static int pagesNumInt;
+	public static String pagesNumString;
+	static String positionsNames[];
+	public static WebDriver driver;
+
+	public static void verifyPositions(String firstPosition, String secondPosition) {
+		String[] positionsNamesExpected = { firstPosition, secondPosition };
+		// Collecting the position links
+		List<WebElement> linksPositions = driver.findElements(By.className("jobtitle"));
+		// Looping through the position links, getting the titles
+		for (int i = 0; i < linksPositions.size(); i++) {
+			String positionsNamesActual = linksPositions.get(i).getText();
+			// Comparing titles with the values from dataprovider
+			try {
+				Assert.assertEquals("Job title '" + positionsNamesActual + "' is wrong. Please check",
+						positionsNamesExpected[0], positionsNamesActual);
+			} catch (ComparisonFailure c) {
+				Assert.assertEquals("Job title '" + positionsNamesActual + "' is wrong. Please check",
+						positionsNamesExpected[1], positionsNamesActual);
+			}
+		}
+	}
+
 	public int attemptNum = 0;
 
 	@AfterClass
 	public void afterClass() {
 		// Quit Driver
-		// driver.quit();
+		driver.quit();
 	}
 
 	@BeforeClass
@@ -66,22 +87,57 @@ public class DanTest {
 		return new Object[][] { { "Rollout", 1, "SAP Business Rollout Manager", "Business Analyst" } };
 	}
 
-	@Test(dataProvider = "danDP") // (testName = "Dan")
+	@Test(dataProvider = "danDP")
 	public void danTest(String searchItem, int PagesNum1, String firstPosition, String secondPosition) {
-		String positions[] = { firstPosition, secondPosition };
 		driver.findElement(By.xpath("//*[@id='exact_words']")).sendKeys(searchItem);
 		driver.findElement(By.xpath("//*[@id='content']/form/table/tbody/tr[2]/td[3]/input")).click();
+
 		// Verify if data provided is valid: number of pages, titles of
 		// positions
-		verifyPagesNumString = driver.findElement(By.className("pagination")).getText().replaceAll("[^0-9]", "");
-		verifyPagesNumInt = Integer.parseInt(verifyPagesNumString);
-		Assert.assertEquals("The number of pages is wrong - ", PagesNum1, verifyPagesNumInt);
-		List<WebElement> verifyLinksPositions = driver.findElements(By.className("jobtitle"));
-		for (int i = 0; i < verifyLinksPositions.size(); i++) {
-			String positionName = verifyLinksPositions.get(i).getText();
-			Assert.assertEquals("Job title '" + positionName + "' is wrong. Please check", positions[i], positionName);
-		}
+		paginationNum();
+		Assert.assertEquals("The number of pages is wrong - ", PagesNum1, pagesNumInt);
+		verifyPositions(firstPosition, secondPosition);
+		System.out.println("Simple search page: parametres of dataprovider verified - PASS.");
+
+		// Navigating to Advanced search
 		driver.findElement(By.xpath("//*[@id='content']/form/table/tbody/tr[3]/td[3]/a[1]")).click();
 
+		// Checking "With all of this words" textfield functionality
+		driver.findElement(By.xpath("//*[@id='all_words']")).sendKeys(searchItem);
+		driver.findElement(By.xpath("//*[@id='exact_words']")).clear();
+		driver.findElement(By.xpath("//input[@type='submit']")).click();
+		paginationNum();
+		Assert.assertEquals("The number of pages is wrong - ", PagesNum1, pagesNumInt);
+		verifyPositions(firstPosition, secondPosition);
+		driver.findElement(By.xpath("//*[@id='all_words']")).clear();
+		System.out.println("<With all of this words> textfield: pagination and job positions verified  - PASS.");
+
+		// Checking "With the exact phrase" textfield functionality
+		driver.findElement(By.xpath("//*[@id='exact_words']")).sendKeys(searchItem);
+		driver.findElement(By.xpath("//input[@type='submit']")).click();
+		paginationNum();
+		Assert.assertEquals("The number of pages is wrong - ", PagesNum1, pagesNumInt);
+		verifyPositions(firstPosition, secondPosition);
+		driver.findElement(By.xpath("//*[@id='exact_words']")).clear();
+		System.out.println("<With the exact phrase> textfield: pagination and job positions verified  - PASS.");
+
+		// Checking "With at least one of these words" textfield functionality
+		driver.findElement(By.xpath("//*[@id='one_word']")).sendKeys(searchItem);
+		driver.findElement(By.xpath("//input[@type='submit']")).click();
+		paginationNum();
+		Assert.assertEquals("The number of pages is wrong - ", PagesNum1, pagesNumInt);
+		verifyPositions(firstPosition, secondPosition);
+		driver.findElement(By.xpath("//*[@id='one_word']")).clear();
+		System.out.println(
+				"<With at least one of these words> textfield: pagination and job positions verified  - PASS.");
+		System.out.println("<<<<<<<<>>>>>>>>");
+		System.out.println("");
+
+	}
+
+	public int paginationNum() {
+		// Getting the number of pages
+		pagesNumString = driver.findElement(By.className("pagination")).getText().replaceAll("[^0-9]", "");
+		return pagesNumInt = Integer.parseInt(pagesNumString);
 	}
 }
