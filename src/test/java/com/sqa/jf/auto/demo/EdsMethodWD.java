@@ -17,6 +17,7 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.support.ui.Select;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -54,25 +55,41 @@ public class EdsMethodWD {
 	 *            the data provide.
 	 */
 	@Test(dataProvider = "AdvanceAllJobSearchAllFieldData")
-	public void AdvanceAllJobSearchAllFieldTest(String allWords, boolean expectingResults) {
+	public void AdvanceAllJobSearchAllFieldTest(String allWords, int expecedResults) {
+		int actualFound = 0;
 		String description = "";
 		this.driver.findElement(By.xpath(".//*[@id='all_words']")).clear();
 		this.driver.findElement(By.xpath(".//*[@id='all_words']")).sendKeys(allWords);
 		this.driver.findElement(By.xpath(".//input[@value='Search']")).click();
 		if (this.driver.findElements(By.xpath("//div[@id='content']/div[2]/center/strong"))
 				.size() > 0) {
-			Assert.assertFalse(expectingResults);
-			System.out.println(this.driver
-					.findElement(By.xpath("//div[@id='content']/div[2]/center/strong")).getText());
+			actualFound = 0;
 		} else {
 			if (this.driver.findElement(By.cssSelector("a[href^='/view/position']")).isDisplayed()
 					&& this.driver.findElement(By.cssSelector("a[href^='/view/position']"))
 							.isDisplayed()) {
+				Select select =
+						new Select(this.driver.findElement(By.xpath(".//*[@id='items_per_page']")));
+				select.selectByValue("50");
 				List<WebElement> elements =
 						this.driver.findElements(By.cssSelector("a[href^='/view/position']"));
-				printResultsFromAllWordsField(elements, allWords);
-				Assert.assertTrue(expectingResults);
+				actualFound += elements.size();
+				// printResultsFromAllWordsField(elements, allWords);
+				// verifyStringExistDescription(elements, allWords);
 			}
+		}
+		Assert.assertEquals(actualFound, expecedResults,
+				"Check the Database because count is not matching");
+	}
+
+	/**
+	 * @param elements
+	 * @param allWords
+	 */
+	private void verifyStringExistDescription(List<WebElement> elements, String allWords) {
+		for (WebElement webElement : elements) {
+			this.driver.get(webElement.getAttribute("herf"));
+			this.driver.navigate().back();
 		}
 	}
 
@@ -91,9 +108,9 @@ public class EdsMethodWD {
 
 	@DataProvider
 	public Object[][] AdvanceAllJobSearchAllFieldData() {
-		return new Object[][] { new Object[] { "QA", true }, new Object[] { "SQA", true },
-				new Object[] { "QA, Test", true }, new Object[] { "QA, Test, Engineer", true },
-				new Object[] { "No, Search, With, This Key Words", false } };
+		return new Object[][] { new Object[] { "QA", 8 }, new Object[] { "SQA", 2 },
+				new Object[] { "Automation", 8 }, new Object[] { "QA, Engineer", 0 },
+				new Object[] { "Test", 14 }, new Object[] { "Cooking, Sheft, Software", 0 } };
 	}
 
 	@BeforeClass
