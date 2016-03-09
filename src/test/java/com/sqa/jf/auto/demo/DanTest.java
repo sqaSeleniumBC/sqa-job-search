@@ -120,7 +120,6 @@ public class DanTest {
 
 		// Navigating to Simple search page for the next test
 		driver.findElement(By.partialLinkText("simple search")).click();
-		// driver.findElement(By.id("main")).click();
 
 	}
 
