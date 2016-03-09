@@ -63,27 +63,49 @@ public class EdsMethodWD {
 		this.driver.findElement(By.xpath(".//input[@value='Search']")).click();
 		if (this.driver.findElements(By.xpath("//div[@id='content']/div[2]/center/strong"))
 				.size() > 0) {
-			actualFound = 0;
 		} else {
-			if (this.driver.findElement(By.cssSelector("a[href^='/view/position']")).isDisplayed()
-					&& this.driver.findElement(By.cssSelector("a[href^='/view/position']"))
-							.isDisplayed()) {
-				Select select =
-						new Select(this.driver.findElement(By.xpath(".//*[@id='items_per_page']")));
-				// TODO: Need to use next page... or verify that DDL has already
-				// been selected.
-				if (!this.driver.findElement(By.xpath("")).isSelected()) {
-					select.selectByValue("50");
+			int totalPages =
+					this.driver.findElements(By.cssSelector("a[href*='items_per_page']")).size();
+			do {
+				if (this.driver.findElement(By.cssSelector("a[href^='/view/position']"))
+						.isDisplayed()
+						&& this.driver.findElement(By.cssSelector("a[href^='/view/position']"))
+								.isDisplayed()) {
+					Select select = new Select(
+							this.driver.findElement(By.xpath(".//*[@id='items_per_page']")));
+					// if (!this.driver.findElement(By.xpath("")).isSelected())
+					// {
+					// select.selectByValue("50");
+					// }
+					List<WebElement> elements =
+							this.driver.findElements(By.cssSelector("a[href^='/view/position']"));
+					actualFound += elements.size();
 				}
-				List<WebElement> elements =
-						this.driver.findElements(By.cssSelector("a[href^='/view/position']"));
-				actualFound += elements.size();
-				// printResultsFromAllWordsField(elements, allWords);
-				// verifyStringExistDescription(elements, allWords);
-			}
+			} while (goToNextPage(totalPages));
 		}
 		Assert.assertEquals(actualFound, expecedResults,
 				"Check the Database because count is not matching");
+	}
+
+	/**
+	 * @param totalPages
+	 */
+	private boolean goToNextPage(int totalPages) {
+		if (totalPages > 0) {
+			int currentPage =
+					Integer.parseInt(this.driver
+							.findElement(
+									By.cssSelector("a[href*='items_per_page'][class='active']"))
+							.getText());
+			currentPage++;
+			if (currentPage <= totalPages) {
+				this.driver.findElement(By.linkText("" + currentPage)).click();
+				return true;
+			} else {
+				return false;
+			}
+		}
+		return false;
 	}
 
 	/**
