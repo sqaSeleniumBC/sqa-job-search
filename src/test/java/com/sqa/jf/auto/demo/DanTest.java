@@ -2,6 +2,7 @@ package com.sqa.jf.auto.demo;
 
 import java.util.List;
 
+import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -11,36 +12,17 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import junit.framework.Assert;
-import junit.framework.ComparisonFailure;
-
 public class DanTest {
 	// Declaring variables
 	public static String baseURL = "http://careers.renttesters.com/";
-	public static int pagesNumInt;
+	public static int pagesNum;
 	public static String pagesNumString;
-	static String positionsNames[];
 	public static WebDriver driver;
-
-	public static void verifyPositions(String firstPosition, String secondPosition) {
-		String[] positionsNamesExpected = { firstPosition, secondPosition };
-		// Collecting the position links
-		List<WebElement> linksPositions = driver.findElements(By.className("jobtitle"));
-		// Looping through the position links, getting the titles
-		for (int i = 0; i < linksPositions.size(); i++) {
-			String positionsNamesActual = linksPositions.get(i).getText();
-			// Comparing titles with the values from dataprovider
-			try {
-				Assert.assertEquals("Job title '" + positionsNamesActual + "' is wrong. Please check",
-						positionsNamesExpected[0], positionsNamesActual);
-			} catch (ComparisonFailure c) {
-				Assert.assertEquals("Job title '" + positionsNamesActual + "' is wrong. Please check",
-						positionsNamesExpected[1], positionsNamesActual);
-			}
-		}
-	}
-
-	public int attemptNum = 0;
+	public static int attemptNum = 0;
+	// public static int simplePositionsNum = 0;
+	public static int simplePositionsNum;
+	private int advancedPagesNum;
+	private int advancedPositionsNum;
 
 	@AfterClass
 	public void afterClass() {
@@ -82,62 +64,71 @@ public class DanTest {
 		}
 	}
 
+	private int countPositions() {
+		int localPositionsNum = 0;
+		for (int k = 1; k <= pagesNum; k++) {
+			// Collecting the position links
+			List<WebElement> linksPositions = driver.findElements(By.className("jobtitle"));
+			// Looping through the position links, getting the titles
+			localPositionsNum = linksPositions.size() + localPositionsNum;
+			if (pagesNum > 1 && k < pagesNum) {
+				int pageNumInt = k + 1;
+				String pageNumString = String.valueOf(pageNumInt);
+				driver.findElement(By.linkText(pageNumString)).click();
+			}
+
+		}
+		return localPositionsNum;
+
+	}
+
 	@DataProvider // (name = "Dan")
 	public Object[][] danDP() {
-		return new Object[][] { { "Rollout", 1, "SAP Business Rollout Manager", "Business Analyst" } };
+		return new Object[][] { { "sdfsdfsd" }, { "Business" }, { "Rollout" }, { "Business Analyst" }, { "Analyst" },
+				{ "" } };
 	}
 
 	@Test(dataProvider = "danDP")
-	public void danTest(String searchItem, int PagesNum1, String firstPosition, String secondPosition) {
+	public void danTest(String searchItem) {
+
+		// Setting the search value to search positions
+		driver.findElement(By.xpath("//*[@id='exact_words']")).clear();
 		driver.findElement(By.xpath("//*[@id='exact_words']")).sendKeys(searchItem);
 		driver.findElement(By.xpath("//*[@id='content']/form/table/tbody/tr[2]/td[3]/input")).click();
-
-		// Verify if data provided is valid: number of pages, titles of
-		// positions
-		paginationNum();
-		Assert.assertEquals("The number of pages is wrong - ", PagesNum1, pagesNumInt);
-		verifyPositions(firstPosition, secondPosition);
-		System.out.println("Simple search page: parametres of dataprovider verified - PASS.");
+		// Number of pages to be able to click on the next page
+		pagesNum = pagination();
+		// Number of positions on Simple search page
+		simplePositionsNum = countPositions();
 
 		// Navigating to Advanced search
 		driver.findElement(By.xpath("//*[@id='content']/form/table/tbody/tr[3]/td[3]/a[1]")).click();
 
-		// Checking "With all of this words" textfield functionality
-		driver.findElement(By.xpath("//*[@id='all_words']")).sendKeys(searchItem);
+		// Setting the value to "With the exact phrase" textfield
 		driver.findElement(By.xpath("//*[@id='exact_words']")).clear();
-		driver.findElement(By.xpath("//input[@type='submit']")).click();
-		paginationNum();
-		Assert.assertEquals("The number of pages is wrong - ", PagesNum1, pagesNumInt);
-		verifyPositions(firstPosition, secondPosition);
-		driver.findElement(By.xpath("//*[@id='all_words']")).clear();
-		System.out.println("<With all of this words> textfield: pagination and job positions verified  - PASS.");
-
-		// Checking "With the exact phrase" textfield functionality
 		driver.findElement(By.xpath("//*[@id='exact_words']")).sendKeys(searchItem);
 		driver.findElement(By.xpath("//input[@type='submit']")).click();
-		paginationNum();
-		Assert.assertEquals("The number of pages is wrong - ", PagesNum1, pagesNumInt);
-		verifyPositions(firstPosition, secondPosition);
-		driver.findElement(By.xpath("//*[@id='exact_words']")).clear();
-		System.out.println("<With the exact phrase> textfield: pagination and job positions verified  - PASS.");
+		// Number of pages to be able to click on the next page
+		pagesNum = pagination();
+		// Number of positions on Advanced search page
+		advancedPositionsNum = countPositions();
 
-		// Checking "With at least one of these words" textfield functionality
-		driver.findElement(By.xpath("//*[@id='one_word']")).sendKeys(searchItem);
-		driver.findElement(By.xpath("//input[@type='submit']")).click();
-		paginationNum();
-		Assert.assertEquals("The number of pages is wrong - ", PagesNum1, pagesNumInt);
-		verifyPositions(firstPosition, secondPosition);
-		driver.findElement(By.xpath("//*[@id='one_word']")).clear();
-		System.out.println(
-				"<With at least one of these words> textfield: pagination and job positions verified  - PASS.");
-		System.out.println("<<<<<<<<>>>>>>>>");
-		System.out.println("");
+		// Veryifying if number of pistions on Simple search page matches with
+		// the number on Advanced search page - With the exact phrase
+		Assert.assertEquals(
+				"The number of positions on Simple search page doesn't match with the results on \"With the exact phrase\"",
+				simplePositionsNum, advancedPositionsNum);
+
+		// Navigating to Simple search page for the next test
+		driver.findElement(By.partialLinkText("simple search")).click();
+		// driver.findElement(By.id("main")).click();
 
 	}
 
-	public int paginationNum() {
+	public int pagination() {
+		int localPageNunmber;
 		// Getting the number of pages
-		pagesNumString = driver.findElement(By.className("pagination")).getText().replaceAll("[^0-9]", "");
-		return pagesNumInt = Integer.parseInt(pagesNumString);
+		List<WebElement> linksPagesNums = driver.findElements(By.cssSelector("ul.pagination a"));
+		localPageNunmber = linksPagesNums.size();
+		return localPageNunmber;
 	}
 }
