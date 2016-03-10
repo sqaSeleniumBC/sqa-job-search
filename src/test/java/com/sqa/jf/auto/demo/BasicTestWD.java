@@ -1,31 +1,56 @@
 package com.sqa.jf.auto.demo;
 
-import org.openqa.selenium.*;
-import org.testng.annotations.*;
+import java.util.concurrent.TimeUnit;
 
-import com.sqa.jf.auto.*;
-import com.sqa.jf.auto.config.*;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
 
-public class BasicTestWD extends DriverFactory {
+public class BasicTestWD {
 
-	@Test
-	public void googleCheeseExample() throws Exception {
-		exampleGoogleTest("Cheese");
+	public String BASE_URL = "http://careers.renttesters.com";
+
+	private WebDriver driver;
+
+	private boolean acceptNextAlert = true;
+
+	private StringBuffer verificationErrors = new StringBuffer();
+
+	/**
+	 * Will perform a search using one or more words and verify that the word
+	 * existing within the description of the job.
+	 * 
+	 * @param allWords
+	 *            words that will be used to search which will be obtained from
+	 *            the data provide.
+	 */
+	@Test(dataProvider = "AdvanceAllJobSearchAllFieldData")
+	public void AdvanceAllJobSearchAllFieldTest(String allWords, boolean expectingResults) {
 	}
 
+	@DataProvider
+	public Object[][] AdvanceAllJobSearchAllFieldData() {
+		return new Object[][] { new Object[] { "QA", true } };
+	}
+
+<<<<<<< HEAD
 	@Test(enabled=false)
 	public void googleMilkExample() throws Exception {
 		exampleGoogleTest("Milk");
+=======
+	@BeforeClass
+	public void beforeClass() {
+		this.driver = new FirefoxDriver();
+		this.driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+		this.driver.get(this.BASE_URL + "/");
+>>>>>>> 8966e46f9ad333b3e2cdb01e9cf9a9966cef37c4
 	}
 
-	private void exampleGoogleTest(final String searchString) throws Exception {
-		WebDriver driver = DriverFactory.getDriver();
-		driver.get("http://sfbay.craigslist.com");
-		WebElement searchField = driver.findElement(By.id("query"));
-		searchField.clear();
-		searchField.sendKeys(searchString);
-		System.out.println("Page Title:" + driver.getTitle());
-		searchField.submit();
-		Thread.sleep(5000);
+	@AfterClass
+	public void afterClass() {
+		// this.driver.quit();
 	}
 }
