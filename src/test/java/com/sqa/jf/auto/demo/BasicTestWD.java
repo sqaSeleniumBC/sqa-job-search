@@ -13,7 +13,7 @@ public class BasicTestWD extends DriverFactory {
 		exampleGoogleTest("Cheese");
 	}
 
-	@Test
+	@Test(enabled=false)
 	public void googleMilkExample() throws Exception {
 		exampleGoogleTest("Milk");
 	}
