@@ -13,7 +13,7 @@
 		<!-- Encodings -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.report.outputEncoding>UTF-8</project.report.outputEncoding>
-		<!-- Dependency versions-->
+		<!-- Dependency versions -->
 		<selenium.version>2.48.2</selenium.version>
 		<testng.version>6.9.6</testng.version>
 		<jdk.version>1.7</jdk.version>
@@ -42,7 +42,7 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-	
+
 	<build>
 		<plugins>
 			<plugin>
@@ -77,7 +77,24 @@
 					<target>${jdk.version}</target>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>com.lazerycode.selenium</groupId>
+				<artifactId>driver-binary-downloader-maven-plugin</artifactId>
+				<version>1.0.7</version>
+				<configuration>
+					<rootStandaloneServerDirectory>${project.basedir}/src/test/resources/selenium_standalone_binaries</rootStandaloneServerDirectory>
+					<downloadedZipFileDirectory>${project.basedir}/src/test/resources/selenium_standalone_zips</downloadedZipFileDirectory>
+					<customRepositoryMap>${project.basedir}/src/test/resources/RepositoryMap.xml</customRepositoryMap>
+					<overwriteFilesThatExist>${overwrite.binaries}</overwriteFilesThatExist>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>selenium</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
-	
 </project>
