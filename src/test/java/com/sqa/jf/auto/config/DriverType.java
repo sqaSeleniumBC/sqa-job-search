@@ -101,5 +101,5 @@ public enum DriverType implements DriverSetup {
 		public WebDriver getWebDriverObject(DesiredCapabilities capabilities) {
 			return new OperaDriver(getDesiredCapabilities());
 		}
-	};
+	};	
 }

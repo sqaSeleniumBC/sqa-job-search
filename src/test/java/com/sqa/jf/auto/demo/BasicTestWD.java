@@ -1,32 +1,50 @@
 package com.sqa.jf.auto.demo;
 
-import org.openqa.selenium.By;
+import java.util.concurrent.TimeUnit;
+
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import com.sqa.jf.auto.DriverFactory;
+public class BasicTestWD {
 
-public class BasicTestWD extends DriverFactory {
+	public String BASE_URL = "http://careers.renttesters.com";
 
-	@Test
-	public void googleCheeseExample() throws Exception {
-		exampleGoogleTest("Cheese");
+	private WebDriver driver;
+
+	private boolean acceptNextAlert = true;
+
+	private StringBuffer verificationErrors = new StringBuffer();
+
+	@DataProvider
+	public Object[][] AdvanceAllJobSearchAllFieldData() {
+		return new Object[][] { new Object[] { "QA", true } };
 	}
 
-	@Test
-	public void googleMilkExample() throws Exception {
-		exampleGoogleTest("Milk");
+	/**
+	 * Will perform a search using one or more words and verify that the word
+	 * existing within the description of the job.
+	 *
+	 * @param allWords
+	 *            words that will be used to search which will be obtained from
+	 *            the data provide.
+	 */
+	@Test(dataProvider = "AdvanceAllJobSearchAllFieldData")
+	public void AdvanceAllJobSearchAllFieldTest(String allWords, boolean expectingResults) {
 	}
 
-	private void exampleGoogleTest(final String searchString) throws Exception {
-		WebDriver driver = DriverFactory.getDriver();
-		driver.get("http://sfbay.craigslist.com");
-		WebElement searchField = driver.findElement(By.id("query"));
-		searchField.clear();
-		searchField.sendKeys(searchString);
-		System.out.println("Page Title:" + driver.getTitle());
-		searchField.submit();
-		Thread.sleep(5000);
+	@AfterClass
+	public void afterClass() {
+		// this.driver.quit();
+	}
+
+	@BeforeClass
+	public void beforeClass() {
+		driver = new FirefoxDriver();
+		driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+		driver.get(BASE_URL + "/");
 	}
 }
